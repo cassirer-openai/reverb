@@ -37,9 +37,31 @@ class PatternDataset(dataset_ops.UnaryDataset):
   in the same way as the steps were added to a Reverb StructuredWriter and
   then sampled.
 
-  TODO(sabela): Add examples.
+  Example:
 
-  Note that this dataset can only be used in eager mode (i.e., not TF1 support).
+  ```python
+  steps = tf.data.Dataset.from_tensor_slices({
+      'data': tf.range(4),
+      'is_last': [False, False, False, True],
+  })
+  ref = structured_writer.create_reference_step(steps.element_spec)
+  last = structured_writer.pattern_from_transform(ref,
+                                                  lambda s: s['data'][-1])
+  pair = structured_writer.pattern_from_transform(ref,
+                                                  lambda s: s['data'][-2:])
+  configs = [
+      structured_writer.create_config(last, table='demo'),
+      structured_writer.create_config(pair, table='demo'),
+  ]
+  dataset = PatternDataset(
+      input_dataset=steps,
+      configs=configs,
+      respect_episode_boundaries=True,
+      is_end_of_episode=lambda x: x['is_last'])
+  ```
+
+  Note that this dataset can only be used in eager mode (i.e., not TF1
+  support).
   """
 
   def __init__(self,
