@@ -487,7 +487,7 @@ class Client:
 
     Args:
       timeout: Timeout in seconds to wait for server response. By default no
-        deadline is set and call will block indefinetely until server responds.
+        deadline is set and call will block indefinitely until server responds.
 
     Returns:
       A dictionary mapping table names to their associated `TableInfo`
